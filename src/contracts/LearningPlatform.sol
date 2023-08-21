@@ -66,9 +66,8 @@ contract LearningPlatform is ERC721Enumerable {
         owner = msg.sender;
     }
 
-    // Function to create a new course, only callable by the owner
+    // Function to create a new course, callable by anyone
     function createCourse(string memory _title, address _instructor, string memory _ipfsHash, string memory _examTitle, string memory _certificateIpfsHash, uint256 _fee) public {
-        require(msg.sender == owner, "Only the owner can create courses");
         courses[courseCount] = Course(courseCount, _title, _instructor, _ipfsHash, _examTitle, _certificateIpfsHash, true, _fee);
         courseCount++;
     }
@@ -118,7 +117,7 @@ contract LearningPlatform is ERC721Enumerable {
     }
 
     // Function to mark a course as completed and issue a certificate
-    function markCompletionAndIssueCertificate(uint256 _courseId, address _student, string memory _metadataIpfsHash) public {
+    function markCompletionAndIssueCertificate(uint256 _courseId, address _student, string memory _studentName, string memory _metadataIpfsHash) public {
         require(courses[_courseId].isActive, "Course not available");
         // Authorization check: Only the instructor, owner or student can issue certificates
         require(msg.sender == _student || courses[_courseId].instructor == msg.sender || msg.sender == owner, "Not authorized");
@@ -217,3 +216,4 @@ contract LearningPlatform is ERC721Enumerable {
     }
 
 } // End of contract
+
