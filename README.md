@@ -85,6 +85,7 @@ The contract enables the platform to provide a comprehensive solution for online
 
 **Key Structures**:
 1. **Course**:
+
 Contains information about the course such as:
 
 - `id`: The unique identifier for the course.
