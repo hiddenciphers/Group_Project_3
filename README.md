@@ -146,10 +146,6 @@ Records the exam results for students, including:
 - Recording of exam results for specific courses.
 - Retrieval of completion dates for specific courses and students.
 
-**Ownership Management**:
-
-- The contract has an owner who has special permissions, such as creating courses.
-
 **NFT Functionality**:
 
 - The contract utilises ERC721Enumerable to handle the minting and management of certificates as NFTs.
