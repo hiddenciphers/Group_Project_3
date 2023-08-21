@@ -43,6 +43,7 @@ def pin_to_ipfs(file):
     response = requests.post('https://api.pinata.cloud/pinning/pinFileToIPFS', files={'file': file}, headers=headers)
     return response.json() if response.status_code == 200 else None
 
+# Main panel
 def main_page():
     st.title("Skillified")
     st.write("Your On-Chain Education Platform")
@@ -69,17 +70,23 @@ def is_course_title_duplicate(course_title):
             return True
     return False
 
+# Admin panel
 def admin_panel(user_address):
     st.title('Admin Portal')
     course_title = st.text_input('Course Title')
     instructor_address = st.selectbox('Select The Instructors Address:', accounts)
     course_file = st.file_uploader('Upload Course Material')
-    certificate_file = st.file_uploader('Upload Certificate Image') # Certificate image uploader
-    course_fee = st.number_input('Enter Course Fee in ETH:', min_value=0.0) # Course fee input
+    certificate_file = st.file_uploader('Upload Certificate Image')  # Certificate image uploader
+    course_fee = st.number_input('Enter Course Fee in ETH:', min_value=0.0)  # Course fee input
 
     # Dropdown to select an exam for the course
     exam_titles = list(Exams.keys())
     selected_exam_title = st.selectbox('Select Exam for the Course:', exam_titles)
+
+    # Check if the course title matches the selected exam title
+    if course_title != selected_exam_title:
+        st.error("The course title and exam title must match!")
+        return
 
     # Check for duplicate course title
     if is_course_title_duplicate(course_title):
@@ -116,10 +123,9 @@ def admin_panel(user_address):
             st.write(f"Transaction Hash: {tx_hash.hex()}")
         else:
             st.warning("Failed to upload to IPFS")
-            
             progress_bar.empty()
 
-
+# Instructor panel
 def instructor_panel(user_address):
     st.title('Instructor Portal')
     
@@ -279,6 +285,7 @@ def instructor_panel(user_address):
     else:
         st.error("You are not authorized to view this information.")
 
+# Student panel
 def student_panel(user_address):
     # Accessing the session state
     session_state = st.session_state
@@ -449,10 +456,9 @@ def main():
     elif user_role == 'Student':
         student_panel(user_address)
         
-
+# Run app
 if __name__ == "__main__":
     main()
-
 
 
 
