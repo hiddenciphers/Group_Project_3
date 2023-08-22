@@ -119,8 +119,7 @@ def admin_panel(user_address):
             tx_hash = learning_platform.functions.createCourse(course_title, instructor_address, ipfs_hash['IpfsHash'], selected_exam_title, certificate_ipfs_hash['IpfsHash'], fee_in_wei).transact({'from': user_address})
             # Update progress to 100% after course creation is complete
             progress_bar.progress(100)
-            st.write(f"Course Created!")
-            st.write(f"Transaction Hash: {tx_hash.hex()}")
+            st.success(f"Course Created! Transaction Hash: {tx_hash.hex()}")
         else:
             st.warning("Failed to upload to IPFS")
             progress_bar.empty()
@@ -134,7 +133,7 @@ def instructor_panel(user_address):
 
     # Check if there are any courses available
     if course_count == 0:
-        st.error("No courses are available at this time. Please check back later.")
+        st.warning("No courses are available at this time. Please check back later.")
         return  # Exit the function since no courses are available
 
     # Check if the user is an instructor for any course
@@ -162,14 +161,16 @@ def instructor_panel(user_address):
                     is_passed = quiz_result[2]
                     completion_date_timestamp = learning_platform.functions.getCompletionDate(course_id, student_address).call()
                     completion_date = datetime.utcfromtimestamp(completion_date_timestamp).strftime('%Y-%m-%d')
+                    if completion_date == '1970-01-01':
+                        completion_date = "Not Completed"
 
                     status = "Not Attempted"
                     if quiz_result[3] != 0: # Check if the timestamp is set
                         status = "Passed" if is_passed else "Failed"
 
-                    st.write(f"Course: {course_title} (ID: {course_id}), Student Name: {student_name}, Address: {student_address}, Enrollment Date: {enrollment_date}, Exam Status: {status}, Completion Date: {completion_date}")
+                    st.info(f"Course: {course_title} (ID: {course_id}), Student Name: {student_name}, Address: {student_address}, Enrollment Date: {enrollment_date}, Exam Status: {status}, Completion Date: {completion_date}")
         else:
-            st.warning("Only the Contract Owner/Admin can view Enrollments")
+            st.warning("Only the Contract Owner/Instructor can view Enrollments")
 
     # Let the user select address from a dropdown
     student_address = st.selectbox('Select Student Address:', accounts)
@@ -208,7 +209,11 @@ def instructor_panel(user_address):
             break
 
     if st.button('Mark Completion and Issue Certificate') and course_id is not None and student_name is not None:
-        # Initialise the progress bar
+        instructor_address = learning_platform.functions.courses(course_id).call()[2]
+        if user_address != instructor_address and user_address != learning_platform.functions.owner().call():
+            st.error("You are not authorised to mark completion or issue a certificate for this course.")
+            return
+        # Initialise progress bar
         progress_bar = st.progress(0)
         progress_text = st.empty()
 
@@ -253,7 +258,7 @@ def instructor_panel(user_address):
             course_id, student_address, student_name, metadata_ipfs_hash
         ).transact({'from': user_address})
         progress_bar.progress(100)
-        st.write(f"Completion Marked and Certificate Issued! Transaction Hash: {tx_hash.hex()}")
+        st.success(f"Completion Marked and Certificate Issued! Transaction Hash: {tx_hash.hex()}")
 
     # Section to view Exam results
     st.subheader('View Student Exam Results')
@@ -279,11 +284,11 @@ def instructor_panel(user_address):
         if student_address_to_view and course_id_to_view is not None:  # Check if the student address is provided
             exam_result = learning_platform.functions.examResults(course_id_to_view, student_address_to_view).call()
             is_passed = exam_result[2] # Accessing the isPassed by index 2
-            st.write(f"Course ID: {course_id_to_view}, Passed: {'✅' if is_passed else '❌'}")
+            st.info(f"Course ID: {course_id_to_view}, Passed: {'✅' if is_passed else '❌'}")
         else:
             st.warning("Please enter a valid student address.")
     else:
-        st.error("You are not authorized to view this information.")
+        st.error("You are not authorised to view this information.")
 
 # Student panel
 def student_panel(user_address):
@@ -302,7 +307,7 @@ def student_panel(user_address):
 
     # Check if there are any courses available
     if course_count == 0:
-        st.error("No courses are available at this time. Please check back later.")
+        st.warning("No courses are available at this time. Please check back later.")
         return  # Exit the function since no courses are available
     
     course_options = []
@@ -324,8 +329,7 @@ def student_panel(user_address):
             if selected_course_id not in session_state.enrolled_courses:
                 selected_course_fee_in_wei = Web3.toWei(selected_course_fee, 'ether')  # Convert the fee to wei
                 tx_hash = learning_platform.functions.enrollInCourse(selected_course_id, student_name).transact({'from': user_address, 'value': selected_course_fee_in_wei})
-                st.write(f"Enrolled in {selected_course_title} Successfully!")
-                st.write(f"Transaction Hash: {tx_hash.hex()}")
+                st.success(f"Enrolled in {selected_course_title} Successfully! Transaction Hash: {tx_hash.hex()}")
                 session_state.enrolled_courses.append(selected_course_id)  # Add to enrolled courses
             else:
                 st.warning("You are already enrolled in this course.")  # Display a warning if already enrolled
@@ -349,10 +353,10 @@ def student_panel(user_address):
                 st.markdown(f'<audio src="{audio_file_url}" autoplay loop></audio>', unsafe_allow_html=True)
                 
 
-        # Take Exam button
-        take_exam_key = f'take_exam_{selected_course_id}'
-        if st.button(f'Take Exam: {selected_course_title}', key=take_exam_key):
-            session_state.taking_exam[selected_course_id] = True  # Set the state for the specific course
+            # Take Exam button
+            take_exam_key = f'take_exam_{selected_course_id}'
+            if st.button(f'Take Exam: {selected_course_title}', key=take_exam_key):
+                session_state.taking_exam[selected_course_id] = True  # Set the state for the specific course
 
         if session_state.taking_exam.get(selected_course_id):
             quiz_function = Exams[selected_course_title]
@@ -360,6 +364,7 @@ def student_panel(user_address):
             exam_status = "Passed" if is_passed else "Failed"
 
             if is_passed:
+                # Disable the "Take Exam" button by removing its state
                 session_state.taking_exam[selected_course_id] = False  # Reset the state for the specific course
 
                 # Create metadata object
@@ -387,12 +392,12 @@ def student_panel(user_address):
                 tx_hash = learning_platform.functions.markCompletionAndIssueCertificate(
                     selected_course_id, user_address, student_name, metadata_ipfs_hash
                 ).transact({'from': user_address})
-                st.write(f"Completion Marked and Certificate Issued! Transaction Hash: {tx_hash.hex()}")
                 # Embed autoplaying audio using HTML
                 audio_file_url = "https://ipfs.io/ipfs/QmazrLqVKC1MAwyMjnrvL5YuRL8h4U5H1ZRhc4SpSyP85w?filename=interloodle.mp3"
                 st.markdown(f'<audio src="{audio_file_url}" autoplay loop></audio>', unsafe_allow_html=True)
+                st.success(f"Completion Marked and Certificate Issued! Transaction Hash: {tx_hash.hex()}")
             else:
-                st.write("You have not passed the exam. Please try again.")
+                st.warning("You have not passed the exam.")
 
     # View owned certificates
     st.subheader('My Certificates')
