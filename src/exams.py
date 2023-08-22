@@ -142,7 +142,7 @@ def blockchain_and_web3_exam(user_address, course_id, course_count):
 
 # Contain Exams within a dictionary named exams which can be imported to main skillified.py script
 Exams = {
-    "Blockchain & Web3": blockchain_and_web3_exam,
     "Introduction to Python": introduction_to_python_exam,
-    "Machine Learning": machine_learning_exam
+    "Machine Learning": machine_learning_exam,
+    "Blockchain & Web3": blockchain_and_web3_exam
 }
