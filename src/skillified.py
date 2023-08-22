@@ -352,7 +352,6 @@ def student_panel(user_address):
                 audio_file_url = "https://ipfs.io/ipfs/QmazrLqVKC1MAwyMjnrvL5YuRL8h4U5H1ZRhc4SpSyP85w?filename=interloodle.mp3"
                 st.markdown(f'<audio src="{audio_file_url}" autoplay loop></audio>', unsafe_allow_html=True)
                 
-
             # Take Exam button
             take_exam_key = f'take_exam_{selected_course_id}'
             if st.button(f'Take Exam: {selected_course_title}', key=take_exam_key):
@@ -454,6 +453,9 @@ def main():
 
     # Add a logout button to the sidebar
     if st.sidebar.button('Logout'):
+        # Clear the session state related to the logged-in user
+        st.session_state.enrolled_courses = []
+        st.session_state.taking_exam = {}
         st.session_state.logged_in = False # Set the logged_in state to False
         st.experimental_rerun() # Rerun the app to refresh the page
 
