@@ -444,7 +444,12 @@ def main():
 
     # If the user is logged in, proceed to the admin panel
     user_address = st.session_state.user_address # Retrieve the user address from session state
-    st.sidebar.title('Navigation')
+    st.sidebar.title("Skillified")
+    st.sidebar.header("Your On-Chain Education Platform")
+    image_url = "https://ipfs.io/ipfs/QmX7vXcFZgoTe8pwEqChUT8A641Gu5CfGcHNu6LKWgp45Z?filename=blockchain%26web3_certificate.png" # Replace with your actual image URL
+    # Display the image in the sidebar
+    st.sidebar.image(image_url, width=250)
+    st.sidebar.header('Navigation')
     user_role = st.sidebar.selectbox('Select Role', ['Admin', 'Instructor', 'Student'])
 
     # Add a logout button to the sidebar
