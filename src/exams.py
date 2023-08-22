@@ -22,7 +22,7 @@ w3 = Web3(Web3.HTTPProvider(WEB3_RPC))
 learning_platform = w3.eth.contract(address=SMART_CONTRACT_ADDRESS, abi=contract_abi)
 
 # Introduction to Python Exam
-def introduction_to_python_exam_panel(user_address, course_id, course_count):
+def introduction_to_python_exam(user_address, course_id, course_count):
     st.title('Introduction to Python Exam')
     questions = [
         {'question': 'What is the correct way to comment a line in Python?', 'options': ['// this is a comment', '/* this is a comment */', '# this is a comment'], 'answer': 2},
@@ -51,7 +51,7 @@ def introduction_to_python_exam_panel(user_address, course_id, course_count):
         tx_hash = learning_platform.functions.recordExamResult(course_id, is_passed).transact({'from': user_address})
         result_message = "Congratulations, you passed!" if is_passed else "Sorry, you did not pass."
         st.write(result_message)
-        st.write(f"Result Recorded! Transaction Hash: {tx_hash.hex()}")
+        st.success(f"Result Recorded! Transaction Hash: {tx_hash.hex()}")
     
         if is_passed:  # Only show balloons if the student has passed
             st.balloons() 
@@ -62,7 +62,7 @@ def introduction_to_python_exam_panel(user_address, course_id, course_count):
 
 
 # Machine Learning exam
-def machine_learning_exam_panel(user_address, course_id, course_count):
+def machine_learning_exam(user_address, course_id, course_count):
     st.title('Machine Learning Exam')
     questions = [
         {'question': 'Which of the following is a supervised learning method?', 'options': ['K-Means', 'Linear Regression', 'PCA'], 'answer': 1},
@@ -91,7 +91,7 @@ def machine_learning_exam_panel(user_address, course_id, course_count):
         tx_hash = learning_platform.functions.recordExamResult(course_id, is_passed).transact({'from': user_address})
         result_message = "Congratulations, you passed!" if is_passed else "Sorry, you did not pass."
         st.write(result_message)
-        st.write(f"Result Recorded! Transaction Hash: {tx_hash.hex()}")
+        st.success(f"Result Recorded! Transaction Hash: {tx_hash.hex()}")
     
         if is_passed:  # Only show balloons if the student has passed
             st.balloons() 
@@ -102,7 +102,7 @@ def machine_learning_exam_panel(user_address, course_id, course_count):
 
     
 # Blockchain & Web3 Exam
-def blockchain_and_web3_exam_panel(user_address, course_id, course_count):
+def blockchain_and_web3_exam(user_address, course_id, course_count):
     st.title('Blockchain and Web3 Exam')
     questions = [
         {'question': 'What does the term "Blockchain" refer to?', 'options': ['A type of database', 'A programming language', 'A web framework'], 'answer': 0},
@@ -131,7 +131,7 @@ def blockchain_and_web3_exam_panel(user_address, course_id, course_count):
         tx_hash = learning_platform.functions.recordExamResult(course_id, is_passed).transact({'from': user_address})
         result_message = "Congratulations, you passed!" if is_passed else "Sorry, you did not pass."
         st.write(result_message)
-        st.write(f"Result Recorded! Transaction Hash: {tx_hash.hex()}")
+        st.success(f"Result Recorded! Transaction Hash: {tx_hash.hex()}")
     
         if is_passed:  # Only show balloons if the student has passed
             st.balloons() 
@@ -140,10 +140,9 @@ def blockchain_and_web3_exam_panel(user_address, course_id, course_count):
 
     return False
 
-
 # Contain Exams within a dictionary named exams which can be imported to main skillified.py script
 Exams = {
-    "Blockchain & Web3": blockchain_and_web3_exam_panel,
-    "Introduction to Python": introduction_to_python_exam_panel,
-    "Machine Learning": machine_learning_exam_panel
+    "Blockchain & Web3": blockchain_and_web3_exam,
+    "Introduction to Python": introduction_to_python_exam,
+    "Machine Learning": machine_learning_exam
 }
