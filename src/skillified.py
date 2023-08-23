@@ -7,7 +7,6 @@ import streamlit as st
 from io import BytesIO
 from exams import Exams # Custom Exams module
 from datetime import datetime
-from datetime import datetime
 from dotenv import load_dotenv
 from metadata import create_metadata, pin_to_ipfs # Custom metadata module
 from download import PDF # Custom module to create PDF
@@ -532,8 +531,7 @@ def main():
 
     elif user_role == 'Student':
         student_panel(user_address)
-        
-# Run app
+# Check whether the current script is being run as the main program
 if __name__ == "__main__":
     main()
 
