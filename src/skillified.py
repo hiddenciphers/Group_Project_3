@@ -10,6 +10,7 @@ from datetime import datetime
 from datetime import datetime
 from dotenv import load_dotenv
 from metadata import create_metadata, pin_to_ipfs # Custom metadata module
+from download import PDF # Custom module to create PDF
 
 # Load environment variables
 load_dotenv()
@@ -29,7 +30,7 @@ with open('contracts/compiled/contract_abi.json') as f:
 # Instantiate contract
 learning_platform = w3.eth.contract(address=SMART_CONTRACT_ADDRESS, abi=contract_abi)
 
-# Declare accounts as global variable
+# Declare accounts as global variable to be accessed by mutiple functions
 accounts = w3.eth.accounts
 
 # Pinata headers
@@ -38,6 +39,7 @@ headers = {
     'pinata_secret_api_key': PINATA_SECRET_API_KEY,
 }
 
+# Pin to IPFS
 def pin_to_ipfs(file):
     # Use the 'file' directly as it is an UploadedFile object
     response = requests.post('https://api.pinata.cloud/pinning/pinFileToIPFS', files={'file': file}, headers=headers)
@@ -46,7 +48,7 @@ def pin_to_ipfs(file):
 # Main panel
 def main_page():
     st.title("Skillified")
-    st.write("Your On-Chain Education Platform")
+    st.write("Your On-Chain Education & Skills Verification Platform")
     image_url = "https://ipfs.io/ipfs/QmX7vXcFZgoTe8pwEqChUT8A641Gu5CfGcHNu6LKWgp45Z?filename=blockchain%26web3_certificate.png" # Replace with your actual image URL
     st.image(image_url, width=350)
     user_address = st.selectbox('Select Your Ethereum Address:', accounts)
@@ -55,6 +57,7 @@ def main_page():
         st.session_state.user_address = user_address # Store the selected user address
         st.experimental_rerun() # Rerun the app to refresh the page
 
+# Function to authenticate user address
 def authenticate():
     # Let the user select their address from a dropdown
     user_address = st.selectbox('Select Your Ethereum Address:', accounts)
@@ -97,9 +100,9 @@ def admin_panel(user_address):
     if not (course_title and instructor_address and course_file and certificate_file and selected_exam_title):
         st.error("All fields are required to create a course!")
         return
-
+    # Create course button
     if st.button('Create Course') and course_file and certificate_file:
-        # Initialize a progress bar
+        # Initialise a progress bar
         progress_bar = st.progress(0)
 
         # Update progress to 10% after initiating the process
@@ -127,7 +130,7 @@ def admin_panel(user_address):
 # Instructor panel
 def instructor_panel(user_address):
     st.title('Instructor Portal')
-    
+
     # Get the course count from the contract
     course_count = learning_platform.functions.courseCount().call()
 
@@ -139,7 +142,7 @@ def instructor_panel(user_address):
     # Check if the user is an instructor for any course
     is_instructor = False
     for i in range(course_count):
-        if user_address == learning_platform.functions.courses(i).call()[2]: # Instructor address is at index 2
+        if user_address == learning_platform.functions.courses(i).call()[2]:  # Instructor address is at index 2
             is_instructor = True
             break
 
@@ -155,8 +158,8 @@ def instructor_panel(user_address):
                 for enrollment in enrollments:
                     course_id = enrollment[0]
                     student_name = enrollment[2]
-                    course_title = learning_platform.functions.courses(course_id).call()[1] # Title is at index 1
-                    enrollment_date = datetime.utcfromtimestamp(enrollment[4]).strftime('%Y-%m-%d') # Enrollment date is at index 4
+                    course_title = learning_platform.functions.courses(course_id).call()[1]  # Title is at index 1
+                    enrollment_date = datetime.utcfromtimestamp(enrollment[4]).strftime('%Y-%m-%d')  # Enrollment date is at index 4
                     quiz_result = learning_platform.functions.examResults(course_id, student_address).call()
                     is_passed = quiz_result[2]
                     completion_date_timestamp = learning_platform.functions.getCompletionDate(course_id, student_address).call()
@@ -165,7 +168,7 @@ def instructor_panel(user_address):
                         completion_date = "Not Completed"
 
                     status = "Not Attempted"
-                    if quiz_result[3] != 0: # Check if the timestamp is set
+                    if quiz_result[3] != 0:  # Check if the timestamp is set
                         status = "Passed" if is_passed else "Failed"
 
                     st.info(f"Course: {course_title} (ID: {course_id}), Student Name: {student_name}, Address: {student_address}, Enrollment Date: {enrollment_date}, Exam Status: {status}, Completion Date: {completion_date}")
@@ -208,11 +211,30 @@ def instructor_panel(user_address):
             student_name = enrollment[2]  # Getting the student name from enrollment
             break
 
-    if st.button('Mark Completion and Issue Certificate') and course_id is not None and student_name is not None:
+    # Check if the student is enrolled in the selected course
+    if course_id is None or student_name is None:
+        st.error(f"The student is not enrolled in the course {selected_course_title}. You cannot mark completion and issue a certificate.")
+    else:
+        if st.button('Mark Completion and Issue Certificate') and course_id is not None and student_name is not None:
+            # Check if the student is enrolled in the selected course
+            if course_id is None or student_name is None:
+                st.error(f"The student is not enrolled in the course {selected_course_title}. You cannot mark completion and issue a certificate.")
+                return
+
+        # Check the completion date
+        completion_date_timestamp = learning_platform.functions.getCompletionDate(course_id, student_address).call()
+        completion_date = datetime.utcfromtimestamp(completion_date_timestamp).strftime('%Y-%m-%d')
+
+        # If the completion date is not the Unix epoch, then the course is already completed
+        if completion_date != '1970-01-01':
+            st.error(f"The student has already completed the course {selected_course_title}. You cannot mark completion and issue a certificate more than once.")
+            return
+
         instructor_address = learning_platform.functions.courses(course_id).call()[2]
         if user_address != instructor_address and user_address != learning_platform.functions.owner().call():
             st.error("You are not authorised to mark completion or issue a certificate for this course.")
             return
+        
         # Initialise progress bar
         progress_bar = st.progress(0)
         progress_text = st.empty()
@@ -253,6 +275,14 @@ def instructor_panel(user_address):
         # Pin metadata to IPFS
         metadata_ipfs_hash = pin_to_ipfs(metadata_file)['IpfsHash']
 
+        # Fetch the token ID for the certificate
+        token_count = learning_platform.functions.balanceOf(student_address).call()
+        for i in range(token_count):
+            token_id = learning_platform.functions.tokenOfOwnerByIndex(student_address, i).call()
+            certificate_ipfs_hash, _, _ = learning_platform.functions.getCertificate(token_id).call()
+            if token_id == course_id:  # Check if the token ID matches the selected course ID
+                break
+
         # Marking complete & issuing certificate - Incremental progress
         tx_hash = learning_platform.functions.markCompletionAndIssueCertificate(
             course_id, student_address, student_name, metadata_ipfs_hash
@@ -264,7 +294,7 @@ def instructor_panel(user_address):
     st.subheader('View Student Exam Results')
     course_name_to_view = st.selectbox('Enter Course Name to View Exam Results', course_options)
     student_address_to_view = st.text_input('Enter Student Address to View Exam Results')
-    
+
     # Find the corresponding course ID for the selected course name
     course_id_to_view = None
     for i in range(course_count):
@@ -278,13 +308,20 @@ def instructor_panel(user_address):
         student_address_to_view = Web3.toChecksumAddress(student_address_to_view)
 
     # Retrieve the instructor's address for the selected course ID
-    instructor_address = learning_platform.functions.courses(course_id_to_view).call()[2] # Instructor address is at index 2
+    instructor_address = learning_platform.functions.courses(course_id_to_view).call()[2]  # Instructor address is at index 2
 
     if user_address == instructor_address or user_address == learning_platform.functions.owner().call():
         if student_address_to_view and course_id_to_view is not None:  # Check if the student address is provided
-            exam_result = learning_platform.functions.examResults(course_id_to_view, student_address_to_view).call()
-            is_passed = exam_result[2] # Accessing the isPassed by index 2
-            st.info(f"Course ID: {course_id_to_view}, Passed: {'✅' if is_passed else '❌'}")
+            # Check if the student is enrolled in the course
+            enrollments = learning_platform.functions.getEnrollments(student_address_to_view).call()
+            is_enrolled = any(enrollment[0] == course_id_to_view for enrollment in enrollments)
+
+            if is_enrolled:
+                exam_result = learning_platform.functions.examResults(course_id_to_view, student_address_to_view).call()
+                is_passed = exam_result[2]  # Accessing the isPassed by index 2
+                st.info(f"Course ID: {course_id_to_view}, Passed: {'✅' if is_passed else '❌'}")
+            else:
+                st.error(f"The student is not enrolled in the course {course_name_to_view}.")
         else:
             st.warning("Please enter a valid student address.")
     else:
@@ -319,8 +356,12 @@ def student_panel(user_address):
     selected_course = st.selectbox('Select a Course', course_options, format_func=lambda x: f"{x[1]} (Fee: {x[3]} ETH)")
     selected_course_id, selected_course_title, selected_ipfs_hash, selected_course_fee = selected_course
 
+    # Add a new state variable to track if the download button was clicked
+    if 'download_clicked' not in session_state:
+        session_state.download_clicked = False
+
     # Student name input
-    student_name = st.text_input('Enter Your Name to Enroll')
+    student_name = st.text_input('Enter Your Name to Enroll or Download Your Certificate')
 
     # Check if the "Enroll" button is clicked and the student name is not empty
     if st.button('Enroll'):
@@ -328,13 +369,23 @@ def student_panel(user_address):
             # Check if the student is already enrolled in the selected course
             if selected_course_id not in session_state.enrolled_courses:
                 selected_course_fee_in_wei = Web3.toWei(selected_course_fee, 'ether')  # Convert the fee to wei
-                tx_hash = learning_platform.functions.enrollInCourse(selected_course_id, student_name).transact({'from': user_address, 'value': selected_course_fee_in_wei})
-                st.success(f"Enrolled in {selected_course_title} Successfully! Transaction Hash: {tx_hash.hex()}")
-                session_state.enrolled_courses.append(selected_course_id)  # Add to enrolled courses
+                
+                # Check if the student's balance is greater than or equal to the course fee
+                student_balance = w3.eth.getBalance(user_address)
+                if student_balance >= selected_course_fee_in_wei:
+                    tx_hash = learning_platform.functions.enrollInCourse(selected_course_id, student_name).transact({'from': user_address, 'value': selected_course_fee_in_wei})
+                    st.success(f"Enrolled in {selected_course_title} Successfully! Transaction Hash: {tx_hash.hex()}")
+                    session_state.enrolled_courses.append(selected_course_id)  # Add to enrolled courses
+                else:
+                    st.error("You have insufficient funds to enroll in this course.")
             else:
                 st.warning("You are already enrolled in this course.")  # Display a warning if already enrolled
         else:
             st.error("Please enter your name before enrolling.")  # Display an error message if the name is not entered
+
+    # Check if download was clicked without entering a name
+    if session_state.download_clicked and not student_name:
+        st.warning("Please Enter Your Name to Download Your Certificate")
 
     # Check if the student is enrolled in the selected course
     if selected_course_id in session_state.enrolled_courses:
@@ -424,11 +475,25 @@ def student_panel(user_address):
             idx = i + j
             if idx < len(certificates):
                 course_title, certificate_ipfs_hash, completion_date_formatted = certificates[idx]
-                # st.write(f"Debug: Metadata IPFS Hash: https://ipfs.io/ipfs/{_}")  # Debug print
                 certificate_url = f"https://ipfs.io/ipfs/{certificate_ipfs_hash}"
                 with cols[j]:  # Place each certificate in one of the columns
                     st.image(certificate_url, caption=course_title, width=150)
                     st.write(f"Completed: {completion_date_formatted}")
+                
+                    if student_name:  # Check if the student name is not empty
+                        pdf_buffer = PDF(certificate_ipfs_hash, student_name, selected_course_title, completion_date_formatted)
+                    
+                        # Create a download link
+                        st.download_button(
+                            label="Download Certificate",
+                            data=pdf_buffer,
+                            file_name=f"{course_title}_certificate.pdf",
+                            mime="application/pdf",
+                        )
+                    else:
+                    # Create a dummy download button that updates the state variable
+                        if st.button("Download Certificate", key=f"download_{idx}"):
+                            session_state.download_clicked = True
 
 # Main login page
 def main():
@@ -444,7 +509,7 @@ def main():
     # If the user is logged in, proceed to the admin panel
     user_address = st.session_state.user_address # Retrieve the user address from session state
     st.sidebar.title("Skillified")
-    st.sidebar.header("Your On-Chain Education Platform")
+    st.sidebar.header("Your On-Chain Education & Skills Verification Platform")
     image_url = "https://ipfs.io/ipfs/QmX7vXcFZgoTe8pwEqChUT8A641Gu5CfGcHNu6LKWgp45Z?filename=blockchain%26web3_certificate.png" # Replace with your actual image URL
     # Display the image in the sidebar
     st.sidebar.image(image_url, width=250)
@@ -458,7 +523,7 @@ def main():
         st.session_state.taking_exam = {}
         st.session_state.logged_in = False # Set the logged_in state to False
         st.experimental_rerun() # Rerun the app to refresh the page
-
+        
     if user_role == 'Admin':
         admin_panel(user_address)
     
@@ -471,6 +536,8 @@ def main():
 # Run app
 if __name__ == "__main__":
     main()
+
+
 
 
 
