@@ -9,7 +9,6 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import landscape
 
 def PDF(certificate_image, student_name, course_title, completion_date):
-    print(f"Debug inside PDF function: Student Name: {student_name}")
     # Image dimensions
     image_width = 200
     image_height = 200
