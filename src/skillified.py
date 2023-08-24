@@ -522,20 +522,18 @@ def main():
         st.session_state.taking_exam = {}
         st.session_state.logged_in = False # Set the logged_in state to False
         st.experimental_rerun() # Rerun the app to refresh the page
-        
+# Navigate to admin panel if the user is an Admin
     if user_role == 'Admin':
         admin_panel(user_address)
-    
+# Navigate to instructor panel if the user is an Instructor
     elif user_role == 'Instructor':
         instructor_panel(user_address)
-
+# Navigate to student panel if the user is a Student
     elif user_role == 'Student':
         student_panel(user_address)
-# Check whether the current script is being run as the main program
+# Execute the main function if the current script is being run as the main program
 if __name__ == "__main__":
     main()
-
-
 
 
 
