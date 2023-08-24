@@ -52,7 +52,7 @@ The Skillified platform features a thoughtfully designed sidebar that serves as 
 
 - **Upload Materials**: Upload course content and certificate images to IPFS.
 
-- **Progress Bar**: A progress bar to provide feedback to the user while uploading files to IPFS and creating the course.![course_created](resources/images/gifs/course_created.gif)
+- **Progress Bar**: A progress bar to provide feedback to the user while uploading files and creating the course.![course_created](resources/images/gifs/course_created.gif)
 
 - **Error Handling**: All fields are required to create a course and courses cannot be duplicated.![all_fields_required](resources/images/error_handlers/all_fields_required.png)![course&exam_must_match](resources/images/error_handlers/course&exam_must_match.png)![course_already_exists](resources/images/error_handlers/course_already_exists.png)
 ---
