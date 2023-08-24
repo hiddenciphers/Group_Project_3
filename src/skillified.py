@@ -5,10 +5,10 @@ import requests
 from web3 import Web3
 import streamlit as st
 from io import BytesIO
-from exams import Exams # Custom Exams module
+from exams import Exams # Custom module containing exams
 from datetime import datetime
 from dotenv import load_dotenv
-from metadata import create_metadata, pin_to_ipfs # Custom metadata module
+from metadata import create_metadata, pin_to_ipfs # Custom module to create metadata
 from download import PDF # Custom module to create PDF
 
 # Load environment variables
@@ -522,13 +522,13 @@ def main():
         st.session_state.taking_exam = {}
         st.session_state.logged_in = False # Set the logged_in state to False
         st.experimental_rerun() # Rerun the app to refresh the page
-# Navigate to admin panel if the user is an Admin
+    # Navigate to admin panel if the user is an Admin
     if user_role == 'Admin':
         admin_panel(user_address)
-# Navigate to instructor panel if the user is an Instructor
+    # Navigate to instructor panel if the user is an Instructor
     elif user_role == 'Instructor':
         instructor_panel(user_address)
-# Navigate to student panel if the user is a Student
+    # Navigate to student panel if the user is a Student
     elif user_role == 'Student':
         student_panel(user_address)
 # Execute the main function if the current script is being run as the main program
