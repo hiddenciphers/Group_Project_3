@@ -18,7 +18,7 @@ Skillified's integration with Ethereum and IPFS not only brings credibility to e
 
 ## Features
 ### Web3 Login Page
-![login_page](resources/images/user_interface/login_page.png)
+![azure_login_page](resources/images/user_interface/azure_login_page.png)
 **How It Works**
 
 1. **Select Ethereum Address**: Users are presented with a dropdown containing available Ethereum addresses. This selection simulates the process of connecting a Web3 wallet.
@@ -26,7 +26,7 @@ Skillified's integration with Ethereum and IPFS not only brings credibility to e
 2. **Login Button**: Upon selecting an address, users can click the "Login" button to access the platform.
 
 ### Sidebar Navigation
-![sidebar](resources/images/user_interface/sidebar.png)
+![sidebar_navigation](resources/images/user_interface/sidebar.png)
 
 3. **Role Selection**: After logging in, users are directed to a navigation sidebar where they can select their role as **Admin**, **Instructor**, or **Student**. Each role provides unique functionalities and access within the platform.
 
