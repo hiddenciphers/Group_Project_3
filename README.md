@@ -67,9 +67,9 @@ Skillified's integration with Ethereum and IPFS not only brings credibility to e
 ![student_portal](resources/images/user_interface/student_portal.png)
 - **Enroll in Courses**: Browse available courses, enroll by paying the required fee, and provide a name for certification.![enrolled_successfully](resources/images/tx_hash_messages/enrolled_successfully.png)
 
-- **Access Course Material**: Access course material hosted on IPFS.![begin_course](resources/images/user_interface/begin_course.png)
+- **Access Course Material**: Access course material hosted on IPFS.![begin_course](resources/images/user_interface/begin_course.png)![blockchain_course](resources/images/gifs/blockchain.gif)
 
-- **Take Exams**: Participate in exams to demonstrate competence.![take_exam_button](resources/images/user_interface/take_exam_button.png)![exam](resources/images/gifs/exam.gif)![exam_passed](resources/images/tx_hash_messages/result_recorded_completion_marked.png)
+- **Take Exams**: Participate in exams to demonstrate competence.![take_exam_button](resources/images/user_interface/take_exam_button.png)![exam](resources/images/gifs/blockchain_exam_scroll.gif)![exam_passed](resources/images/tx_hash_messages/result_recorded_completion_marked.png)
 
 - **Error Handling**: The Student Portal incorporates multiple error handlers and warnings.![no_courses](resources/images/error_handlers/no_courses_available.png)![enter_your_name](resources/images/error_handlers/enter_your_name.png)![you_are_already_enrolled](resources/images/error_handlers/you_are_already_enrolled.png)![insufficient_funds](resources/images/error_handlers/insufficient_funds.png)
 
