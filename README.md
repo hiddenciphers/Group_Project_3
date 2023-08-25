@@ -69,7 +69,7 @@ Skillified's integration with Ethereum and IPFS not only brings credibility to e
 
 - **Access Course Material**: Access course material hosted on IPFS.![begin_course](resources/images/user_interface/begin_course.png)
 
-- **Take Exams**: Participate in exams to demonstrate competence.![take_exam](resources/images/user_interface/take_exam.png)![exam_passed](resources/images/tx_hash_messages/result_recorded_completion_marked.png)
+- **Take Exams**: Participate in exams to demonstrate competence.![take_exam](resources/images/user_interface/take_exam.png)![exam](resources/images/gifs/exam.gif)![exam_passed](resources/images/tx_hash_messages/result_recorded_completion_marked.png)
 
 - **Error Handling**: The Student Portal incorporates multiple error handlers and warnings.![no_courses](resources/images/error_handlers/no_courses_available.png)![enter_your_name](resources/images/error_handlers/enter_your_name.png)![you_are_already_enrolled](resources/images/error_handlers/you_are_already_enrolled.png)![insufficient_funds](resources/images/error_handlers/insufficient_funds.png)
 
