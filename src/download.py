@@ -7,7 +7,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import landscape
-
+# Function to generate PDF file
 def PDF(certificate_image, student_name, course_title, completion_date):
     # Image dimensions
     image_width = 200
