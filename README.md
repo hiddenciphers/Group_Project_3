@@ -1,5 +1,5 @@
 # Skillified: Your On-Chain Education & Skills Verification Platform
-![login_page](resources/images/user_interface/login_page.png)
+![company_logo](resources/certificates/blockchain&web3_certificate.png)
 ## Introduction
 Skillified is a pioneering decentralised, on-chain education platform that transforms the educational landscape by revolutionising the way students learn, instructors teach, and achievements are recognised. Leveraging the state-of-the-art capabilities of blockchain technology and IPFS, Skillified creates a seamless, transparent, and secure environment for course creation, enrollment, examination, and certification. This document serves as a comprehensive guide, detailing the platform's innovative features, intricate smart contract structure, vital dependencies, and streamlined setup instructions. Welcome to the future of education – welcome to Skillified.
 
@@ -18,6 +18,7 @@ Skillified's integration with Ethereum and IPFS not only brings credibility to e
 
 ## Features
 ### Web3 Login Page
+![login_page](resources/images/user_interface/login_page.png)
 **How It Works**
 
 1. **Select Ethereum Address**: Users are presented with a dropdown containing available Ethereum addresses. This selection simulates the process of connecting a Web3 wallet.
