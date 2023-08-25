@@ -38,7 +38,7 @@ contract LearningPlatform is ERC721Enumerable {
         uint256 completionDate;
     }
 
-    // Define a QuizResult struct to track student exam results
+    // Define a Exam Result struct to track student exam results
     struct ExamResult {
         uint256 courseId;
         address student;
