@@ -25,24 +25,21 @@ Skillified's integration with Ethereum and IPFS not only brings credibility to e
 
 2. **Login Button**: Upon selecting an address, users can click the "Login" button to access the platform.
 
-3. **Role Selection**: After logging in, users are directed to a navigation sidebar where they can select their role as Admin, Instructor, or Student. Each role provides unique functionalities and access within the platform.
+### Sidebar Navigation
+![sidebar](resources/images/user_interface/sidebar.png)
+
+3. **Role Selection**: After logging in, users are directed to a navigation sidebar where they can select their role as **Admin**, **Instructor**, or **Student**. Each role provides unique functionalities and access within the platform.
 
 4. **Logout Functionality**: A logout button in the navigation sidebar allows users to log out, returning them to the main page. This makes it possible to select a different account or simply exit the application.
 
 5. **Session Management**: The login and logout functionalities are supported by Streamlit's session state management, ensuring that user selections and actions are preserved across different parts of the application.
 
 ### Benefits
-- **Enhanced User Experience**: The login page provides an intuitive and familiar experience, aligning with typical decentralised applications.
+- **Enhanced User Experience**: The login page and sidebar navigation provide an intuitive and familiar experience, aligning with typical decentralised applications.
 
 - **Role-Based Access**: By allowing users to select roles, the platform can tailor the experience and features available to each user type.
 
 - **Flexibility**: The login page serves as a gateway to the platform, allowing easy navigation and control over user interactions.
----
-### Sidebar Navigation
-![sidebar](resources/images/user_interface/sidebar.png)
-
-The Skillified platform features a thoughtfully designed sidebar that serves as a central navigation hub for users. Upon logging in, users are directed to this sidebar, where they can select their specific role as **Admin**, **Instructor**, or **Student**, and navigate to the corresponding portals. Each role offers unique functionalities and access within the platform, tailored to meet the specific needs of the user. Additionally, the sidebar includes a logout button, allowing users to easily exit or switch accounts. Its user-friendly design ensures smooth navigation, making the interaction with various sections of the platform seamless and intuitive.
-
 ---
 
 ### Admin Portal
