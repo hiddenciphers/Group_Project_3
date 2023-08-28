@@ -142,7 +142,7 @@ The certificate generation and download features not only bring elegance to the 
 By encapsulating the complete life cycle of exams and certificates within a secure and transparent environment, Skillified stands as a symbol of innovation in education, setting new standards for assessment and recognition of learning.
 
 ## Smart Contract Structure
-The Skillified `LearningPlatform` smart contract is underpinned by Solidity and utilises ERC721Enumerable for certificate issuance.
+The Skillified `LearningPlatform.sol` smart contract is underpinned by Solidity and utilises ERC721Enumerable for certificate issuance.
 
 The contract enables the platform to provide a comprehensive solution for online education, integrating course management, student enrollment, certificate issuance, and examination functionalities within a decentralised environment. By leveraging blockchain technology and IPFS, it ensures the integrity, transparency, and verifiability of educational credentials.
 
@@ -213,6 +213,21 @@ Records the exam results for students, including:
 
 - The contract utilises ERC721Enumerable to handle the minting and management of certificates as NFTs.
 
+## Why ERC721Enumerable for Skillified?
+There are several reasons why we decided ERC721Enumerable would be suitable for Skillified:
+
+- **Enumeration**: Since Skillified issues certificates, it's conceivable that a user may own multiple certificates. With ERC721Enumerable, it's easier to enumerate over all certificates owned by a user. This is useful for displaying all owned certificates in the user interface.
+
+- **Interoperability**: The enumerable extension makes it easier for other smart contracts to interact with the Skillified contract. For example, a job marketplace smart contract could easily fetch all certificates owned by a user to verify their qualifications.
+
+- **Rich Metadata**: You can easily tie rich metadata to each certificate, making it more informative and useful. This is crucial for a certification system.
+
+- **Transparency**: The enumerable function allows anyone to easily verify the authenticity of a certificate by cross-referencing it with the on-chain data. This enhances the transparency and credibility of the Skillified platform.
+
+- **Upgradability and Future-proofing**: Using a more feature-rich standard like ERC721Enumerable allows for easier upgrades and additional functionalities in the future.
+
+Given these considerations, ERC721Enumerable offers a more robust and flexible framework for the Skillified platform compared to a basic ERC721 or ERC721Full, especially given the need to enumerate multiple certificates per user.
+
 ## Dependencies
 - **[OS](https://docs.python.org/3/library/os.html)**: Standard library for interacting with the operating system.
 
@@ -275,8 +290,8 @@ Please ensure that your code follows the existing style and that all tests pass.
 ## Contact
 For any questions, suggestions, or feedback, please feel free to contact us at:
 
-- **Email**: [support@skillified.com](mailto:support@skillified.com)
-- **Website**: [www.skillified.com](https://www.skillified.com)
+- **Email**: [support@skillified.com](https://github.com/hiddenciphers/skillified)
+- **Website**: [www.skillified.com](https://github.com/hiddenciphers/skillified)
 
 
 
